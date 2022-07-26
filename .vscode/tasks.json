@@ -1,26 +1,17 @@
 {
-	"taskName": "runCurrentTest",
-	"type": "shell",
-	"command": "NODE_ENV=test ./node_modules/.bin/mocha",
-	"args": [
-			"${relativeFile}"
-	],
-	"group": "test",
-	"presentation": {
-			"echo": true,
-			"reveal": "always",
-			"focus": false,
-			"panel": "dedicated"
-	},
+	"version": "2.0.0",
 	"tasks": [
 		{
 			"type": "docker-build",
 			"label": "docker-build",
 			"platform": "node",
 			"dockerBuild": {
-				"dockerfile": "${workspaceFolder}/Dockerfile",
-				"context": "${workspaceFolder}",
+				"dockerfile": "${workspaceFolder}/poker.engine/Dockerfile",
+				"context": "${workspaceFolder}/poker.engine",
 				"pull": true
+			},
+			"node": {
+				"package": "${workspaceFolder}/poker.engine/package.json"
 			}
 		},
 		{
@@ -29,7 +20,10 @@
 			"dependsOn": [
 				"docker-build"
 			],
-			"platform": "node"
+			"platform": "node",
+			"node": {
+				"package": "${workspaceFolder}/poker.engine/package.json"
+			}
 		},
 		{
 			"type": "docker-run",
@@ -44,6 +38,7 @@
 				}
 			},
 			"node": {
+				"package": "${workspaceFolder}/poker.engine/package.json",
 				"enableDebugging": true
 			}
 		}

@@ -1283,7 +1283,8 @@ export class Table {
     dbGame.boardCards = this.gameState.boardCards;
     dbGame.players = gameResultPlayers;
     dbGame.potResults[0].playerHandEvaluatorResults;
-    let rewardsDetails;
+    let rewardsDetails = new Array();
+    let hasFolded;
     // for (let counter03 = 0; counter03 < data.game.potResults.length; counter03++) {
     //   for (let counter02 = 0; counter02 < data.game.potResults[counter03].seatWinners.length; counter02++) {
 
@@ -1299,20 +1300,32 @@ export class Table {
           }
         }
       }
-      rewardsDetails = {
+      hasFolded = gameResultPlayers[counter01].hasFolded === true ? false : true;
+      rewardsDetails.push({
         date: new Date(Date.now()),
         guid: gameResultPlayers[counter01].guid,
         profitLoss: gameResultPlayers[counter01].profitLoss,
         handRank: dbGame.potResults[0].playerHandEvaluatorResults[counter01] ? dbGame.potResults[0].playerHandEvaluatorResults[counter01].handRank : 0,
         handRankEnglish: dbGame.potResults[0].playerHandEvaluatorResults[counter01] ? dbGame.potResults[0].playerHandEvaluatorResults[counter01].handRankEnglish : "N/A",
         lastStreet: gameResultPlayers[counter01].lastStreet ? gameResultPlayers[counter01].lastStreet : "preflop",
-        winHand: winHand
-      }
+        winHand: winHand,
+        flopScore: gameResultPlayers[counter01].missionData.flopScore,
+        score: gameResultPlayers[counter01].missionData.score,
+        turnScore:  gameResultPlayers[counter01].missionData.turnScore,
+        flopRank: gameResultPlayers[counter01].missionData.flopRank,
+        turnRank: gameResultPlayers[counter01].missionData.turnRank,
+        seenShowdown: hasFolded,
+        holeCards: gameResultPlayers[counter01].holecards,
+        boardCards: this.gameState.boardCards        
+      });
       // console.log(rewardsDetails);
-      await this.dataRepository.saveRewardsDetails(rewardsDetails);
-      await this.dataRepository.updateRewardsReportLeaderboard(rewardsDetails, gameResultPlayers[counter01].guid);
     }
 
+    // await console.log(this.dataRepository.compRewardsDetails(rewardsDetails));
+    for (let counter01 = 0; counter01 < gameResultPlayers.length; counter01++) {
+      await this.dataRepository.saveRewardsDetails(rewardsDetails[counter01]);
+      await this.dataRepository.updateRewardsReportLeaderboard(rewardsDetails[counter01], gameResultPlayers[counter01].guid);
+    }    
     await this.dataRepository.saveGame(dbGame);
     await this.dataRepository.fillPercentile().catch(console.dir);
     let temp = await this.dataRepository.saveTableStates([this.getTableState()]);
@@ -1343,6 +1356,9 @@ export class Table {
         seatEvent.playercards = p.holecards;
       data.tableSeatEvents.seats.push(seatEvent);
     }
+    // console.log("this is the data");
+    // console.log(`============>${data}`);
+    // console.log("yes, this is the data");
     this.sendDataContainer(data);
 
     let delay = remainingPlayers.length > 1 ? 5500 : 1500;
@@ -1393,7 +1409,6 @@ export class Table {
     let prefix = this.tableConfig.currency == Currency.tournament ? '' : '$';
     return prefix + numberWithCommas(val);
   }
-
 
 
 

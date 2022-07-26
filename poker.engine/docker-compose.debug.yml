@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  pokerengine:
+    image: pokerengine
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    ports:
+      - 8111:8111
+      - 9229:9229
+    command: ["node", "--inspect=0.0.0.0:9229", "--require source-map-support/register ./build/poker.engine/src/app.js"]
