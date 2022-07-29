@@ -1,4 +1,4 @@
-import { Db, Server } from 'mongodb';
+import { Db, Server ,MongoClient} from 'mongodb';
 import { PokerProcessor } from "./poker-processor";
 import { WebSocketHandle } from "./model/WebSocketHandle";
 import express = require('express');
@@ -38,9 +38,13 @@ export class ApiEndpoints {
     activateRequestHandler: ActivateRequestHandler;
     resetRequestHandler: ResetRequestHandler;
 
-    constructor(private dataRepository: IDataRepository, private pokerProcessor: PokerProcessor, private connectionToPaymentServer: IConnectionToPaymentServer, private processor: GameServerProcessor) {
-        this.server = new Server(process.env.mongoDBHost, 27017);
-        this.db = new Db(this.dbName, this.server, {});
+       constructor(private dataRepository: IDataRepository, private pokerProcessor: PokerProcessor, private connectionToPaymentServer: IConnectionToPaymentServer, private processor: GameServerProcessor) {
+      
+        this.dbConnection()
+    }
+   async dbConnection(){
+    this.db=  await MongoClient.connect(process.env.mongoDBHost);
+
     }
 
     setup() {
