@@ -39,7 +39,8 @@ export class ApiEndpoints {
     resetRequestHandler: ResetRequestHandler;
 
     constructor(private dataRepository: IDataRepository, private pokerProcessor: PokerProcessor, private connectionToPaymentServer: IConnectionToPaymentServer, private processor: GameServerProcessor) {
-        this.server = new Server(process.env.mongoDBHost, 27017);
+        this.server = new Server(process.env.mongoDBHost, parseInt(process.env.mongoDBPort));
+        console.log(`Connected to ${process.env.mongoDBHost}`);
         this.db = new Db(this.dbName, this.server, {});
     }
 

@@ -68,3 +68,6 @@ poker.engine/.vscode/settings.json
 poker.engine/test/test-rewards.ts
 poker.engine/datajump2.json
 poker.ui/test/unit/setup.js
+.env
+poker.engine/.env
+poker.engine/package.json.save.1

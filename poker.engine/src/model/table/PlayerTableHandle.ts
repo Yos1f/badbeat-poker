@@ -37,6 +37,7 @@ export class PlayerTableHandle implements IPlayer {
       turnRank: number;
       rank: number;
     }
+    position: number;
    
     toTableSeatEvent():TableSeatEvent{
         let event = new TableSeatEvent();

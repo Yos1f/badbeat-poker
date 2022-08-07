@@ -61,7 +61,7 @@ export class DataRepository implements IDataRepository {
 
   init() {
     DataRepository.percentil = [10, 30, 50];
-    this.server = new Server(process.env.mongoDBHost, 27017);
+    this.server = new Server(process.env.mongoDBHost, parseInt(process.env.mongoDBPort));
     
     this.db = new Db(this.dbName, this.server, {});
     return this.db.open();
